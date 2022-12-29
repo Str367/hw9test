@@ -1,5 +1,5 @@
 import { Router } from "express";
-import ScoreCard from "../models/ScoreCard";
+import User from "../models/user";
 import express from "express";
 
 const router = Router();
@@ -7,7 +7,7 @@ router.use(express.json());
 
 const deleteDB = async () => {
   try {
-    await ScoreCard.deleteMany({});
+    await User.deleteMany({});
   } catch (e) {
     throw new Error("Database deletion failed");
   }
@@ -20,12 +20,12 @@ router.delete("/cards", (_, res) => {
 
 let existing = true;
 const saveData = async (name, subject, score) => {
-  existing = await ScoreCard.findOne({ name, subject });
+  existing = await User.findOne({ name, subject });
   if (existing) {
-    await ScoreCard.deleteOne({ name, subject });
+    await User.deleteOne({ name, subject });
   }
   try {
-    const newData = new ScoreCard({ name, subject, score });
+    const newData = new User({ name, subject, score });
     return newData.save();
   } catch (e) {
     throw new Error("User creation error: " + e);
@@ -54,7 +54,7 @@ router.get("/cards", (req, res) => {
 
   if (type == "name") {
     (async () => {
-      const matchData = await ScoreCard.find({ name: val });
+      const matchData = await User.find({ name: val });
       res.json({
         messages:
           matchData.length > 0
@@ -68,7 +68,7 @@ router.get("/cards", (req, res) => {
     })();
   } else {
     (async () => {
-      const matchData = await ScoreCard.find({ subject: val });
+      const matchData = await User.find({ subject: val });
       res.json({
         messages:
           matchData.length > 0
