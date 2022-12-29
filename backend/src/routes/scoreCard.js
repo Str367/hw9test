@@ -48,39 +48,27 @@ router.post("/card", (req, res) => {
   })();
 });
 
-router.get("/cards", (req, res) => {
-  const type = req.query.type;
-  const val = req.query.queryString;
-
-  if (type == "name") {
-    (async () => {
-      const matchData = await User.find({ name: val });
-      res.json({
-        messages:
-          matchData.length > 0
-            ? matchData.map(
-                (e) =>
-                  `Found card with name: (${e.name}, ${e.subject}, ${e.score})`
-              )
-            : false,
-        message: `Name (${val}) not found!`,
-      });
-    })();
-  } else {
-    (async () => {
-      const matchData = await User.find({ subject: val });
-      res.json({
-        messages:
-          matchData.length > 0
-            ? matchData.map(
-                (e) =>
-                  `Found card with subject: (${e.name}, ${e.subject}, ${e.score})`
-              )
-            : false,
-        message: `Subject (${val}) not found!`,
-      });
-    })();
-  }
+router.get("/cards", async (req, res) => {
+  await console.log(req.query);
+  let { type, queryString } = req.query;
+  let returnedSet;
+  if (type === "name") returnedSet = await User.find({ name: queryString });
+  else returnedSet = await User.find({ subject: queryString });
+  if (returnedSet.length == 0)
+    res.json({ message: type + " ( " + queryString + " ) not found!" });
+  else
+    res.json({
+      messages: returnedSet.map(
+        (data) =>
+          "Found card with subject: (" +
+          data.name +
+          ", " +
+          data.subject +
+          ", " +
+          data.score +
+          ")."
+      ),
+    });
 });
 
 export default router;
