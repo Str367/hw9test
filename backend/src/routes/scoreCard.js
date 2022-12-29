@@ -1,5 +1,5 @@
 import { Router } from "express";
-import User from "../models/user";
+import User from "../models/User";
 const router = Router();
 router.post("/card", async (req, res) => {
   let { name, subject, score } = req.body;
